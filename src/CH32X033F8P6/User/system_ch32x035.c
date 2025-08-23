@@ -238,4 +238,3 @@ static void SetSysClockTo48_HSI(void)
 }
 
 #endif
-

@@ -27,6 +27,3 @@ extern void SystemCoreClockUpdate(void);
 #endif
 
 #endif
-
-
-

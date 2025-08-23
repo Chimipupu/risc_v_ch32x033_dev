@@ -24,10 +24,11 @@ extern "C" {
 #define DEBUG_UART1    1
 #define DEBUG_UART2    2
 #define DEBUG_UART3    3
+#define DEBUG_UART4    4
 
 /* DEBUG UATR Definition */
 #ifndef DEBUG
-#define DEBUG   DEBUG_UART1
+#define DEBUG   DEBUG_UART4
 #endif
 
 /* SDI Printf Definition */

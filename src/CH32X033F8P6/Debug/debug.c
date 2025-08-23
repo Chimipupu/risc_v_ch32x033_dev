@@ -90,8 +90,10 @@ void Delay_Ms(uint32_t n)
  */
 void USART_Printf_Init(uint32_t baudrate)
 {
+#if(DEBUG != DEBUG_UART4)
     GPIO_InitTypeDef  GPIO_InitStructure;
     USART_InitTypeDef USART_InitStructure;
+#endif
 
 #if(DEBUG == DEBUG_UART1)
     RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOB, ENABLE);
@@ -121,12 +123,14 @@ void USART_Printf_Init(uint32_t baudrate)
 
 #endif
 
+#if(DEBUG != DEBUG_UART4)
     USART_InitStructure.USART_BaudRate = baudrate;
     USART_InitStructure.USART_WordLength = USART_WordLength_8b;
     USART_InitStructure.USART_StopBits = USART_StopBits_1;
     USART_InitStructure.USART_Parity = USART_Parity_No;
     USART_InitStructure.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
     USART_InitStructure.USART_Mode = USART_Mode_Tx;
+#endif
 
 #if(DEBUG == DEBUG_UART1)
     USART_Init(USART1, &USART_InitStructure);
@@ -181,8 +185,8 @@ int _write(int fd, char *buf, int size)
     {
 
         /**
-         * data0  data1 ¹²8¸ö×Ö½Ú
-         * data0×îµÍÎ»µÄ×Ö½Ú´æ·Å³¤¶È£¬×î´óÎª 7
+         * data0  data1 ï¿½ï¿½8ï¿½ï¿½ï¿½Ö½ï¿½
+         * data0ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½Ö½Ú´ï¿½Å³ï¿½ï¿½È£ï¿½ï¿½ï¿½ï¿½Îª 7
          *
          */
 
@@ -221,6 +225,9 @@ int _write(int fd, char *buf, int size)
 #elif(DEBUG == DEBUG_UART3)
         while(USART_GetFlagStatus(USART3, USART_FLAG_TC) == RESET);
         USART_SendData(USART3, *buf++);
+#elif(DEBUG == DEBUG_UART4)
+        while(USART_GetFlagStatus(USART4, USART_FLAG_TC) == RESET);
+        USART_SendData(USART4, *buf++);
 #endif
     }
 #endif

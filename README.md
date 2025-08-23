@@ -44,6 +44,9 @@
 
 - IDE/SDK/コンパイラ
   - [MounRiver Studio (MRS) V2.2.0](https://www.mounriver.com/download)🔗
+- 最適化
+  - `-Og`　(デバッグ時)
+  - `-Os`　(通常)
 
 ### デバッガ
 
@@ -53,14 +56,18 @@
 
 #### SWD
 
-- [WCH-LinkE <--> 評価基板]
-  - SWDIO <--> PC18ピン
-  - SWCLK <--> PC19ピン
-  - GND <--> GND
+- [WCH-LinkE <--> マイコン]
+  - SWDIO <--> PC18ピン (ICの8ピン)
+  - SWCLK <--> PC19ピン (ICの18ピン)
+  - GND <--> GND (ICの7ピン)
 
 #### UART
 
-- [WCH-LinkE <--> 評価基板]
-  - RX <--> PB10ピン(TX)
-  - TX <--> PB11ピン(RX)
-  - GND <--> GND
+- [WCH-LinkE <--> マイコン]
+  - RX <--> PB0ピン(USART4 TX) (IC2のピン)
+  - TX <--> PB1ピン(USART4 RX) (IC3のピン)
+  - GND <--> GND (ICの7ピン)
+
+<div align="center">
+  <img src="/doc/CH32X033F8P6_Debug_Pin.png">
+</div>
