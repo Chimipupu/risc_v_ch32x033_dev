@@ -12,7 +12,7 @@
 #include "drv_uasrt.h"
 #include "app_main.h"
 
-void USART1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void USART4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 static uint8_t s_rx_buf[USART_RX_BUF_SIZE] = {0}; // UASRT受信リングバッファ
 static uint8_t s_rx_data_size = 0;                // 受信データサイズ
@@ -24,7 +24,7 @@ bool g_is_usart_irq_proc_end = false;
  * @brief USART 割り込みハンドラ
  * 
  */
-void USART1_IRQHandler(void)
+void USART4_IRQHandler(void)
 {
     ITStatus tmp;
 
@@ -63,91 +63,6 @@ int32_t hw_usart_get_char(void)
 
 void hw_usart_init(void)
 {
-#if 0
-    GPIO_InitTypeDef  gpio_pa10;
-    GPIO_InitTypeDef  gpio_pa11;
-    USART_InitTypeDef usart1;
-    NVIC_InitTypeDef nvic;
-
-    // UART1
-    memset(&s_rx_buf, 0x00, sizeof(s_rx_buf));
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_USART1 | RCC_APB2Periph_GPIOA, ENABLE);
-
-    // TXピン (PA10)
-    gpio_pa10.GPIO_Pin = GPIO_Pin_10;
-    gpio_pa10.GPIO_Speed = GPIO_Speed_50MHz;
-    gpio_pa10.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOA, &gpio_pa10);
-
-    // RXピン (PA11)
-    gpio_pa11.GPIO_Pin = GPIO_Pin_11;
-    // gpio_pa11.GPIO_Speed = GPIO_Speed_50MHz;
-    gpio_pa11.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOA, &gpio_pa11);
-
-    // USART1を115200 8N1で初期化
-    usart1.USART_BaudRate = 115200;
-    usart1.USART_WordLength = USART_WordLength_8b;
-    usart1.USART_StopBits = USART_StopBits_1;
-    usart1.USART_Parity = USART_Parity_No;
-    usart1.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    usart1.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
-    USART_Init(USART1, &usart1);
-
-    // USARTの受信割り込み(RXNE)を有効
-    // USART1->STATR = 0x00C0;
-    USART_ITConfig(USART1, USART_IT_RXNE, ENABLE);
-    nvic.NVIC_IRQChannel = USART1_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority = 1;
-    nvic.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&nvic);
-    USART_Cmd(USART1, ENABLE);
-#endif
-
-#if 0
-    GPIO_InitTypeDef  gpio_pb3;
-    GPIO_InitTypeDef  gpio_pb4;
-    USART_InitTypeDef usart3;
-    NVIC_InitTypeDef nvic;
-
-    // UART4
-    memset(&s_rx_buf, 0x00, sizeof(s_rx_buf));
-    RCC_APB1PeriphClockCmd(RCC_APB1Periph_USART3, ENABLE);
-    RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOB, ENABLE);
-
-    // TXピン (PB3)
-    gpio_pb3.GPIO_Pin = GPIO_Pin_3;
-    gpio_pb3.GPIO_Speed = GPIO_Speed_50MHz;
-    gpio_pb3.GPIO_Mode = GPIO_Mode_AF_PP;
-    GPIO_Init(GPIOB, &gpio_pb3);
-
-    // RXピン (PB4)
-    gpio_pb4.GPIO_Pin = GPIO_Pin_4;
-    // gpio_pb4.GPIO_Speed = GPIO_Speed_50MHz;
-    gpio_pb4.GPIO_Mode = GPIO_Mode_IN_FLOATING;
-    GPIO_Init(GPIOB, &gpio_pb4);
-
-    // USART3を115200 8N1で初期化
-    usart3.USART_BaudRate = 115200;
-    usart3.USART_WordLength = USART_WordLength_8b;
-    usart3.USART_StopBits = USART_StopBits_1;
-    usart3.USART_Parity = USART_Parity_No;
-    usart3.USART_HardwareFlowControl = USART_HardwareFlowControl_None;
-    usart3.USART_Mode = USART_Mode_Tx | USART_Mode_Rx;
-    USART_Init(USART3, &usart3);
-
-    // USARTの受信割り込み(RXNE)を有効
-    USART_ITConfig(USART3, USART_IT_RXNE, ENABLE);
-    nvic.NVIC_IRQChannel = USART3_IRQn;
-    nvic.NVIC_IRQChannelPreemptionPriority = 1;
-    nvic.NVIC_IRQChannelSubPriority = 1;
-    nvic.NVIC_IRQChannelCmd = ENABLE;
-    NVIC_Init(&nvic);
-    USART_Cmd(USART3, ENABLE);
-#endif
-
-#if 1
     GPIO_InitTypeDef  gpio_pb0;
     GPIO_InitTypeDef  gpio_pb1;
     USART_InitTypeDef usart4;
@@ -187,5 +102,4 @@ void hw_usart_init(void)
     nvic.NVIC_IRQChannelCmd = ENABLE;
     NVIC_Init(&nvic);
     USART_Cmd(USART4, ENABLE);
-#endif
 }

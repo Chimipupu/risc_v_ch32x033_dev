@@ -36,7 +36,6 @@ int main(void)
     {
         // アプリメイン
         app_main();
-        Delay_Ms(1000);
     }
 
     return 0;

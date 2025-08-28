@@ -9,11 +9,11 @@
  * 
  */
 #include "app_main.h"
+#include "dbg_com.h"
 
-const uint8_t uart_test_str[] = "CH32X033 Develop by Chimipupu(https://github.com/Chimipupu)\r\n";
+// const uint8_t uart_test_str[] = "CH32X033 Develop by Chimipupu(https://github.com/Chimipupu)\r\n";
 
-#if 0
-#include "drv_tim.h"
+// #include "drv_tim.h"
 #include "dbg_com.h"
 
 // extern bool g_is_tim_cnt_up;
@@ -75,6 +75,7 @@ void show_mem_dump(uint32_t dump_addr, uint32_t dump_size)
     }
 }
 
+#if 0
 /**
  * @brief 関数の実行時間を計測する
  * 
@@ -124,7 +125,8 @@ uint32_t get_proc_time(uint32_t start_us_cnt, uint32_t end_us_cnt)
  */
 void app_main_init(void)
 {
-    NOP();
+    // デバッグモニタ初期化
+    dbg_com_init();
 }
 
 /**
@@ -133,6 +135,6 @@ void app_main_init(void)
  */
 void app_main(void)
 {
-    // printf("%s", uart_test_str);
-    printf("test\r\n");
+    // デバッグモニタ
+    dbg_com_main();
 }
