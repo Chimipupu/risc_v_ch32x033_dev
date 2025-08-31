@@ -3,7 +3,7 @@
  * @author Chimipupu(https://github.com/Chimipupu)
  * @brief デバッグモニタのコア処理
  * @version 0.1
- * @date 2025-06-13
+ * @date 2025-08-28
  * 
  * @copyright Copyright (c) 2025 Chimipupu All Rights Reserved.
  * 
@@ -327,13 +327,13 @@ void dbg_com_main(void)
         delete_char_at_cursor();
     } else if (c == KEY_ESC) {  // ESC
 
-        // CH32V006は1byte毎にRXNEをいれてくるでの次のデータまで待ち
+        // CH32X033は1byte毎にRXNEをいれてくるでの次のデータまで待ち
         Delay_Ms(1);
 
         c = hw_usart_get_char();
         if (c == KEY_ANSI_ESC) { // ANSI escape sequence
 
-            // CH32V006は1byte毎にRXNEをいれてくるでの次のデータまで待ち
+            // CH32X033は1byte毎にRXNEをいれてくるでの次のデータまで待ち
             Delay_Ms(1);
 
             c = hw_usart_get_char();

@@ -27,7 +27,7 @@ int main(void)
 
     printf("[DEBUG] CH32X0033F8P6 Develop\r\n");
     printf("SystemClk:%d\r\n",SystemCoreClock);
-    printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID() );
+    printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
 
     // アプリメイン初期化
     app_main_init();
