@@ -32,37 +32,61 @@ const dma_ch_config_data_t g_dma_ch_data[] = {
 };
 
 #ifdef DEBUG_DMA_TEST
-#define DMA_TEST_BUF_SIZE    32
-uint32_t g_dbg_dma_test_src_buf[DMA_TEST_BUF_SIZE] = {
-        0x01020304, 0x05060708, 0x090A0B0C, 0x0D0E0F10,
-        0x11121314, 0x15161718, 0x191A1B1C, 0x1D1E1F20,
-        0x21222324, 0x25262728, 0x292A2B2C, 0x2D2E2F30,
-        0x31323334, 0x35363738, 0x393A3B3C, 0x3D3E3F40,
-        0x41424344, 0x45464748, 0x494A4B4C, 0x4D4E4F50,
-        0x51525354, 0x55565758, 0x595A5B5C, 0x5D5E5F60,
-        0x61626364, 0x65666768, 0x696A6B6C, 0x6D6E6F70,
-        0x71727374, 0x75767778, 0x797A7B7C, 0x7D7E7F80
-        };
+#define DMA_TEST_BUF_SIZE    3
+uint8_t g_dbg_dma_test_src_u8_buf[DMA_TEST_BUF_SIZE]   = {0xAB, 0xCD, 0xEF};
+uint16_t g_dbg_dma_test_src_u16_buf[DMA_TEST_BUF_SIZE] = {0xABCD, 0x1234, 0x5678};
+uint32_t g_dbg_dma_test_src_u32_buf[DMA_TEST_BUF_SIZE] = {0x12345678, 0x00ABCDEF, 0xAABBCCDD};
 
-uint32_t g_dbg_dma_test_dst_buf[DMA_TEST_BUF_SIZE] = {0};
+uint8_t g_dbg_dma_test_dst_u8_buf[DMA_TEST_BUF_SIZE]   = {0};
+uint16_t g_dbg_dma_test_dst_u16_buf[DMA_TEST_BUF_SIZE] = {0};
+uint32_t g_dbg_dma_test_dst_u32_buf[DMA_TEST_BUF_SIZE] = {0};
 
 void dbg_dma_test(void)
 {
-    memset(&g_dbg_dma_test_dst_buf[0], 0x00, DMA_TEST_BUF_SIZE);
+    dma_init_config_t config_u8;
+    dma_init_config_t config_u16;
+    dma_init_config_t config_u32;
 
-    dma_init_config_t config;
+    memset(&g_dbg_dma_test_dst_u8_buf[0], 0, DMA_TEST_BUF_SIZE);
+    memset(&g_dbg_dma_test_dst_u16_buf[0], 0, DMA_TEST_BUF_SIZE);
+    memset(&g_dbg_dma_test_dst_u32_buf[0], 0, DMA_TEST_BUF_SIZE);
 
-    config.ch = DMA_CH_1;
-    config.dir = DMA_MEM_TO_MEM;
-    config.mode = DMA_MODE_ONE_SHOT;
-    config.transfer_size = DMA_BYTE_TRANSFER;
-    config.data_size = DMA_TEST_BUF_SIZE;
-    config.p_src_buf = &g_dbg_dma_test_src_buf[0];
-    config.p_dst_buf = &g_dbg_dma_test_dst_buf[0];
-    drv_dma_init(&config);
+    // DMA Ch1 ... 8bit転送テスト
+    config_u8.ch = DMA_CH_1;
+    config_u8.dir = DMA_MEM_TO_MEM;
+    config_u8.mode = DMA_MODE_ONE_SHOT;
+    config_u8.transfer_size = DMA_BYTE_TRANSFER;
+    config_u8.data_size = DMA_TEST_BUF_SIZE;
+    config_u8.p_src_buf = &g_dbg_dma_test_src_u8_buf[0];
+    config_u8.p_dst_buf = &g_dbg_dma_test_dst_u8_buf[0];
+    drv_dma_init(&config_u8);
+
+    // DMA Ch2 ... 8bit転送テスト
+    config_u16.ch = DMA_CH_2;
+    config_u16.dir = DMA_MEM_TO_MEM;
+    config_u16.mode = DMA_MODE_ONE_SHOT;
+    config_u16.transfer_size = DMA_HALF_WORD_TRANSFER;
+    config_u16.data_size = DMA_TEST_BUF_SIZE;
+    config_u16.p_src_buf = &g_dbg_dma_test_src_u16_buf[0];
+    config_u16.p_dst_buf = &g_dbg_dma_test_dst_u16_buf[0];
+    drv_dma_init(&config_u16);
+
+    // DMA Ch3 ... 8bit転送テスト
+    config_u32.ch = DMA_CH_3;
+    config_u32.dir = DMA_MEM_TO_MEM;
+    config_u32.mode = DMA_MODE_ONE_SHOT;
+    config_u32.transfer_size = DMA_WORD_TRANSFER;
+    config_u32.data_size = DMA_TEST_BUF_SIZE;
+    config_u32.p_src_buf = &g_dbg_dma_test_src_u32_buf[0];
+    config_u32.p_dst_buf = &g_dbg_dma_test_dst_u32_buf[0];
+    drv_dma_init(&config_u32);
 
     drv_dma_start(DMA_CH_1);
+    drv_dma_start(DMA_CH_2);
+    drv_dma_start(DMA_CH_3);
     drv_dma_transfer_check(DMA_CH_1);
+    drv_dma_transfer_check(DMA_CH_2);
+    drv_dma_transfer_check(DMA_CH_3);
 }
 #endif // DEBUG_DMA_TEST
 
@@ -115,6 +139,7 @@ void drv_dma_init(dma_init_config_t *p_dma_config)
 {
     void *p_src;
     void *p_dst;
+    uint8_t transfer_byte;
     DMA_InitTypeDef dma_init_data = {0};
 
     DMA_StructInit(&dma_init_data);
@@ -131,34 +156,38 @@ void drv_dma_init(dma_init_config_t *p_dma_config)
         p_dst = p_dma_config->p_src_buf;
     }
 
-    // DMAの転送サイズの設定
-    dma_init_data.DMA_BufferSize = p_dma_config->data_size * 4;
-
-    // DMAの転送データ幅と転送元と転送先アドレスの設定
+    // DMAの転送データ幅と転送元と転送先アドレスと転送サイズの設定
     switch (p_dma_config->transfer_size)
     {
+        // 16bit転送
         case DMA_HALF_WORD_TRANSFER:
             dma_init_data.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
             dma_init_data.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
             dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)((uint16_t *)p_src);
             dma_init_data.DMA_MemoryBaseAddr = (uint32_t)((uint16_t *)p_dst);
+            transfer_byte = 2;
             break;
 
+        // 32bit転送
         case DMA_WORD_TRANSFER:
             dma_init_data.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
             dma_init_data.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
             dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)((uint32_t *)p_src);
             dma_init_data.DMA_MemoryBaseAddr = (uint32_t)((uint32_t *)p_dst);
+            transfer_byte = 4;
             break;
 
+        // 8bit転送
         case DMA_BYTE_TRANSFER:
         default:
             dma_init_data.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
             dma_init_data.DMA_MemoryDataSize = DMA_PeripheralDataSize_Byte;
             dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)((uint8_t *)p_src);
             dma_init_data.DMA_MemoryBaseAddr = (uint32_t)((uint8_t *)p_dst);
+            transfer_byte = 1;
             break;
     }
+    dma_init_data.DMA_BufferSize = p_dma_config->data_size * transfer_byte;
     dma_init_data.DMA_PeripheralInc = DMA_PeripheralInc_Enable;
     dma_init_data.DMA_MemoryInc = DMA_MemoryInc_Enable;
 
