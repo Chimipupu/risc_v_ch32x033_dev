@@ -13,6 +13,7 @@
 #include <ch32X035.h>
 
 #include "debug.h"
+#include "drv_dma.h"
 #include "drv_uasrt.h"
 #include "app_main.h"
 
@@ -28,6 +29,11 @@ int main(void)
     printf("[DEBUG] CH32X0033F8P6 Develop\r\n");
     printf("SystemClk:%d\r\n",SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+
+#ifdef DEBUG_DMA_TEST
+    // DMAのデバッグ
+    dbg_dma_test();
+#endif // DEBUG_DMA_TEST
 
     // アプリメイン初期化
     app_main_init();
