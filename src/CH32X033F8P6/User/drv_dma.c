@@ -22,29 +22,37 @@ void DMA1_Channel7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast
 void DMA1_Channel8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 #endif
 
-typedef struct {
-    uint8_t ch;             // DMA Ch1~8
-    DMA_Channel_TypeDef *p_ch_typedef;
-    uint8_t irq;
-    uint32_t gl_flg;        // DMA global flag
-    uint32_t tc_flg;        // DMA transfer complete flag
-    uint32_t ht_flg;        // DMA half transfer flag
-    uint32_t te_flg;        // DMA transfer error flag
-    uint32_t gl_it_flg;     // DMA intterput global flag
-    uint32_t tc_it_flg;     // DMA intterput transfer complete flag
-    uint32_t ht_it_flg;     // DMA intterput half transfer flag
-    uint32_t te_it_flg;     // DMA intterput transfer error flag
-} dma_ch_config_data_t;
+const dma_status_flg_t g_dma_status_flg_tbl[] = {
+    {DMA1_FLAG_GL1, DMA1_FLAG_TC1, DMA1_FLAG_HT1, DMA1_FLAG_TE1},
+    {DMA1_FLAG_GL2, DMA1_FLAG_TC2, DMA1_FLAG_HT2, DMA1_FLAG_TE2},
+    {DMA1_FLAG_GL3, DMA1_FLAG_TC3, DMA1_FLAG_HT3, DMA1_FLAG_TE3},
+    {DMA1_FLAG_GL4, DMA1_FLAG_TC4, DMA1_FLAG_HT4, DMA1_FLAG_TE4},
+    {DMA1_FLAG_GL5, DMA1_FLAG_TC5, DMA1_FLAG_HT5, DMA1_FLAG_TE5},
+    {DMA1_FLAG_GL6, DMA1_FLAG_TC6, DMA1_FLAG_HT6, DMA1_FLAG_TE6},
+    {DMA1_FLAG_GL7, DMA1_FLAG_TC7, DMA1_FLAG_HT7, DMA1_FLAG_TE7},
+    {DMA1_FLAG_GL8, DMA1_FLAG_TC8, DMA1_FLAG_HT8, DMA1_FLAG_TE8},
+};
+
+const dma_it_status_flg_t g_dma_it_status_flg_tbl[] = {
+    {DMA1_IT_GL1, DMA1_IT_TC1, DMA1_IT_HT1, DMA1_IT_TE1},
+    {DMA1_IT_GL2, DMA1_IT_TC2, DMA1_IT_HT2, DMA1_IT_TE2},
+    {DMA1_IT_GL3, DMA1_IT_TC3, DMA1_IT_HT3, DMA1_IT_TE3},
+    {DMA1_IT_GL4, DMA1_IT_TC4, DMA1_IT_HT4, DMA1_IT_TE4},
+    {DMA1_IT_GL5, DMA1_IT_TC5, DMA1_IT_HT5, DMA1_IT_TE5},
+    {DMA1_IT_GL6, DMA1_IT_TC6, DMA1_IT_HT6, DMA1_IT_TE6},
+    {DMA1_IT_GL7, DMA1_IT_TC7, DMA1_IT_HT7, DMA1_IT_TE7},
+    {DMA1_IT_GL8, DMA1_IT_TC8, DMA1_IT_HT8, DMA1_IT_TE8},
+};
 
 const dma_ch_config_data_t g_dma_ch_data[] = {
-    {DMA_CH_1, DMA1_Channel1, DMA1_Channel1_IRQn,DMA1_FLAG_GL1, DMA1_FLAG_TC1, DMA1_FLAG_HT1, DMA1_FLAG_TE1, DMA1_IT_GL1, DMA1_IT_TC1, DMA1_IT_HT1, DMA1_IT_TE1},
-    {DMA_CH_2, DMA1_Channel2, DMA1_Channel2_IRQn,DMA1_FLAG_GL2, DMA1_FLAG_TC2, DMA1_FLAG_HT2, DMA1_FLAG_TE2, DMA1_IT_GL2, DMA1_IT_TC2, DMA1_IT_HT2, DMA1_IT_TE2},
-    {DMA_CH_3, DMA1_Channel3, DMA1_Channel3_IRQn,DMA1_FLAG_GL3, DMA1_FLAG_TC3, DMA1_FLAG_HT3, DMA1_FLAG_TE3, DMA1_IT_GL3, DMA1_IT_TC3, DMA1_IT_HT3, DMA1_IT_TE3},
-    {DMA_CH_4, DMA1_Channel4, DMA1_Channel4_IRQn,DMA1_FLAG_GL4, DMA1_FLAG_TC4, DMA1_FLAG_HT4, DMA1_FLAG_TE4, DMA1_IT_GL4, DMA1_IT_TC4, DMA1_IT_HT4, DMA1_IT_TE4},
-    {DMA_CH_5, DMA1_Channel5, DMA1_Channel5_IRQn,DMA1_FLAG_GL5, DMA1_FLAG_TC5, DMA1_FLAG_HT5, DMA1_FLAG_TE5, DMA1_IT_GL5, DMA1_IT_TC5, DMA1_IT_HT5, DMA1_IT_TE5},
-    {DMA_CH_6, DMA1_Channel6, DMA1_Channel6_IRQn,DMA1_FLAG_GL6, DMA1_FLAG_TC6, DMA1_FLAG_HT6, DMA1_FLAG_TE6, DMA1_IT_GL6, DMA1_IT_TC6, DMA1_IT_HT6, DMA1_IT_TE6},
-    {DMA_CH_7, DMA1_Channel7, DMA1_Channel7_IRQn,DMA1_FLAG_GL7, DMA1_FLAG_TC7, DMA1_FLAG_HT7, DMA1_FLAG_TE7, DMA1_IT_GL7, DMA1_IT_TC7, DMA1_IT_HT7, DMA1_IT_TE7},
-    {DMA_CH_8, DMA1_Channel8, DMA1_Channel8_IRQn,DMA1_FLAG_GL8, DMA1_FLAG_TC8, DMA1_FLAG_HT8, DMA1_FLAG_TE8, DMA1_IT_GL8, DMA1_IT_TC8, DMA1_IT_HT8, DMA1_IT_TE8},
+    {DMA_CH_1, DMA1_Channel1, DMA1_Channel1_IRQn, &g_dma_status_flg_tbl[0], &g_dma_it_status_flg_tbl[0]},
+    {DMA_CH_2, DMA1_Channel2, DMA1_Channel2_IRQn, &g_dma_status_flg_tbl[1], &g_dma_it_status_flg_tbl[1]},
+    {DMA_CH_3, DMA1_Channel3, DMA1_Channel3_IRQn, &g_dma_status_flg_tbl[2], &g_dma_it_status_flg_tbl[2]},
+    {DMA_CH_4, DMA1_Channel4, DMA1_Channel4_IRQn, &g_dma_status_flg_tbl[3], &g_dma_it_status_flg_tbl[3]},
+    {DMA_CH_5, DMA1_Channel5, DMA1_Channel5_IRQn, &g_dma_status_flg_tbl[4], &g_dma_it_status_flg_tbl[4]},
+    {DMA_CH_6, DMA1_Channel6, DMA1_Channel6_IRQn, &g_dma_status_flg_tbl[5], &g_dma_it_status_flg_tbl[5]},
+    {DMA_CH_7, DMA1_Channel7, DMA1_Channel7_IRQn, &g_dma_status_flg_tbl[6], &g_dma_it_status_flg_tbl[6]},
+    {DMA_CH_8, DMA1_Channel8, DMA1_Channel8_IRQn, &g_dma_status_flg_tbl[7], &g_dma_it_status_flg_tbl[7]},
 };
 
 static void dma_isr(uint8_t ch);
@@ -115,14 +123,18 @@ void dbg_dma_test(void)
 /**
  * @brief DMA割り込みハンドラISR
  * 
- * @param ch 
+ * @param ch DMA Ch1~8
  */
 static void dma_isr(uint8_t ch)
 {
-    if( DMA_GetITStatus(g_dma_ch_data[ch].tc_it_flg) != RESET )
-    {
-        DMA_Cmd(g_dma_ch_data[ch].p_ch_typedef, DISABLE );
-        DMA_ClearITPendingBit(g_dma_ch_data[ch].tc_it_flg);
+    ITStatus status;
+
+    status = DMA_GetITStatus(g_dma_ch_data[ch].p_it_status_flg_tbl->tc_it_flg);
+
+    // DMA転送完了割り込み(TC)
+    if(status != RESET) {
+        DMA_Cmd(g_dma_ch_data[ch].p_ch_typedef, DISABLE);
+        DMA_ClearITPendingBit(g_dma_ch_data[ch].p_it_status_flg_tbl->tc_it_flg);
     }
 }
 
@@ -164,7 +176,7 @@ void drv_dma_start(uint8_t ch)
 }
 
 /**
- * @brief DMA転送状況確認関数
+ * @brief DMA転送状況確認関数(割り込み未使用時のポーリング用)
  * 
  * @param ch DMA Ch1~8
  * @return 0x00 DMA転送中
@@ -177,12 +189,12 @@ uint8_t drv_dma_transfer_check(uint8_t ch)
     FlagStatus status;
 
     // DMA転送エラーステータス確認
-    status = DMA_GetFlagStatus(g_dma_ch_data[ch].te_flg);
+    status = DMA_GetFlagStatus(g_dma_ch_data[ch].p_status_flg_tbl->te_flg);
     if(status != RESET) {
         ret = 0xFF;
     } else {
         // DMA転送完了ステータス確認
-        status = DMA_GetFlagStatus(g_dma_ch_data[ch].tc_flg);
+        status = DMA_GetFlagStatus(g_dma_ch_data[ch].p_status_flg_tbl->tc_flg);
         if(status != RESET) {
             ret = 0x01;
         } else {
@@ -267,7 +279,7 @@ void drv_dma_init(dma_init_config_t *p_dma_config)
     dma_init_data.DMA_Priority = DMA_Priority_VeryHigh;
     dma_init_data.DMA_M2M = DMA_M2M_Enable;
     DMA_Init(g_dma_ch_data[p_dma_config->ch].p_ch_typedef, &dma_init_data);
-    DMA_ClearFlag(g_dma_ch_data[p_dma_config->ch].tc_flg);
+    DMA_ClearFlag(g_dma_ch_data[p_dma_config->ch].p_status_flg_tbl->tc_flg);
 
     // DMA割り込み有効
     if(p_dma_config->is_it_use != false){

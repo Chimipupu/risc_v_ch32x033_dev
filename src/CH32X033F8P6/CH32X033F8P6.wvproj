@@ -27,9 +27,9 @@
 				"name": "ch32x035_i2c.c"
 			},
 			{
-				"name": "ch32x035_i2c.h",
 				"parentLogicPath": "Peripheral/inc",
-				"type": "file"
+				"type": "file",
+				"name": "ch32x035_i2c.h"
 			}
 		],
 		"projectName": "CH32X033F8P6",
@@ -53,7 +53,7 @@
 				"post_script_description": "",
 				"excludeResources": [],
 				"optimization": {
-					"level": "size",
+					"level": "debug",
 					"message_length": true,
 					"char_is_signed": true,
 					"function_sections": true,

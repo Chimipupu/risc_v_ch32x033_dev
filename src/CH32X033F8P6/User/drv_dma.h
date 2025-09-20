@@ -55,6 +55,28 @@ typedef struct {
     bool is_it_use;         // DMA割り込み有効
 } dma_init_config_t;
 
+typedef struct {
+    uint32_t gl_flg;        // DMA global flag
+    uint32_t tc_flg;        // DMA transfer complete flag
+    uint32_t ht_flg;        // DMA half transfer flag
+    uint32_t te_flg;        // DMA transfer error flag
+} dma_status_flg_t;
+
+typedef struct {
+    uint32_t gl_it_flg;     // DMA intterput global flag
+    uint32_t tc_it_flg;     // DMA intterput transfer complete flag
+    uint32_t ht_it_flg;     // DMA intterput half transfer flag
+    uint32_t te_it_flg;     // DMA intterput transfer error flag
+} dma_it_status_flg_t;
+
+typedef struct {
+    uint8_t ch;             // DMA Ch1~8
+    DMA_Channel_TypeDef *p_ch_typedef;
+    uint8_t irq;
+    const dma_status_flg_t *p_status_flg_tbl;
+    const dma_it_status_flg_t *p_it_status_flg_tbl;
+} dma_ch_config_data_t;
+
 void drv_dma_start(uint8_t ch);
 uint8_t drv_dma_transfer_check(uint8_t ch);
 void drv_dma_init(dma_init_config_t *p_dma_config);
