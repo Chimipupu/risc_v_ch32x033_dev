@@ -113,45 +113,54 @@ uint8_t drv_dma_transfer_check(uint8_t ch)
  */
 void drv_dma_init(dma_init_config_t *p_dma_config)
 {
+    void *p_src;
+    void *p_dst;
     DMA_InitTypeDef dma_init_data = {0};
 
     DMA_StructInit(&dma_init_data);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-    // DMAの転送元と転送先アドレスの設定
-    dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)p_dma_config->p_src_buf;
-    dma_init_data.DMA_MemoryBaseAddr = (uint32_t)p_dma_config->p_dst_buf;
-    dma_init_data.DMA_PeripheralInc = DMA_PeripheralInc_Enable;
-    dma_init_data.DMA_MemoryInc = DMA_MemoryInc_Enable;
-
     // DMAの転送方向の設定
     if(p_dma_config->dir == DMA_MEM_TO_MEM) {
         dma_init_data.DMA_DIR = DMA_DIR_PeripheralSRC;
+        p_src = p_dma_config->p_src_buf;
+        p_dst = p_dma_config->p_dst_buf;
     } else {
         dma_init_data.DMA_DIR = DMA_DIR_PeripheralDST;
+        p_src = p_dma_config->p_dst_buf;
+        p_dst = p_dma_config->p_src_buf;
     }
 
     // DMAの転送サイズの設定
     dma_init_data.DMA_BufferSize = p_dma_config->data_size * 4;
 
+    // DMAの転送データ幅と転送元と転送先アドレスの設定
     switch (p_dma_config->transfer_size)
     {
         case DMA_HALF_WORD_TRANSFER:
             dma_init_data.DMA_PeripheralDataSize = DMA_PeripheralDataSize_HalfWord;
             dma_init_data.DMA_MemoryDataSize = DMA_MemoryDataSize_HalfWord;
+            dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)((uint16_t *)p_src);
+            dma_init_data.DMA_MemoryBaseAddr = (uint32_t)((uint16_t *)p_dst);
             break;
 
         case DMA_WORD_TRANSFER:
             dma_init_data.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Word;
             dma_init_data.DMA_MemoryDataSize = DMA_MemoryDataSize_Word;
+            dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)((uint32_t *)p_src);
+            dma_init_data.DMA_MemoryBaseAddr = (uint32_t)((uint32_t *)p_dst);
             break;
 
         case DMA_BYTE_TRANSFER:
         default:
             dma_init_data.DMA_PeripheralDataSize = DMA_PeripheralDataSize_Byte;
             dma_init_data.DMA_MemoryDataSize = DMA_PeripheralDataSize_Byte;
+            dma_init_data.DMA_PeripheralBaseAddr = (uint32_t)((uint8_t *)p_src);
+            dma_init_data.DMA_MemoryBaseAddr = (uint32_t)((uint8_t *)p_dst);
             break;
     }
+    dma_init_data.DMA_PeripheralInc = DMA_PeripheralInc_Enable;
+    dma_init_data.DMA_MemoryInc = DMA_MemoryInc_Enable;
 
     // DMAの転送モードの設定
     if (p_dma_config->mode == DMA_MODE_ONE_SHOT)

@@ -50,8 +50,8 @@ typedef struct {
     uint8_t mode;           // DMA転送モード(単発 or サーキュラー)
     uint32_t transfer_size; // DMA転送データ幅(1/2/4Byte)
     uint32_t data_size;     // 転送サイズ(Byte数)
-    uint32_t *p_src_buf;    // DMA転送元
-    uint32_t *p_dst_buf;    // DMA転送先
+    void *p_src_buf;        // DMA転送元バッファポインタ
+    void *p_dst_buf;        // DMA転送先バッファポインタ
 } dma_init_config_t;
 
 void drv_dma_start(uint8_t ch);
