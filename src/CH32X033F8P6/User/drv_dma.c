@@ -1,7 +1,7 @@
 /**
  * @file drv_dma.c
  * @author Chimipupu(https://github.com/Chimipupu)
- * @brief  CH32X033 DMAドライバ＆ラッパー＆API
+ * @brief CH32X033用DMAドライバのラッパー＆API
  * @version 0.1
  * @date 2025-09-20
  * 
@@ -11,26 +11,45 @@
 
 #include "drv_dma.h"
 
+void DMA1_Channel1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if 0
+void DMA1_Channel4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void DMA1_Channel8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
+
 typedef struct {
     uint8_t ch;             // DMA Ch1~8
     DMA_Channel_TypeDef *p_ch_typedef;
+    uint8_t irq;
     uint32_t gl_flg;        // DMA global flag
     uint32_t tc_flg;        // DMA transfer complete flag
     uint32_t ht_flg;        // DMA half transfer flag
     uint32_t te_flg;        // DMA transfer error flag
+    uint32_t gl_it_flg;     // DMA intterput global flag
+    uint32_t tc_it_flg;     // DMA intterput transfer complete flag
+    uint32_t ht_it_flg;     // DMA intterput half transfer flag
+    uint32_t te_it_flg;     // DMA intterput transfer error flag
 } dma_ch_config_data_t;
 
 const dma_ch_config_data_t g_dma_ch_data[] = {
-    {DMA_CH_1, DMA1_Channel1, DMA1_FLAG_GL1, DMA1_FLAG_TC1, DMA1_FLAG_HT1, DMA1_FLAG_TE1},
-    {DMA_CH_2, DMA1_Channel2, DMA1_FLAG_GL2, DMA1_FLAG_TC2, DMA1_FLAG_HT2, DMA1_FLAG_TE2},
-    {DMA_CH_3, DMA1_Channel3, DMA1_FLAG_GL3, DMA1_FLAG_TC3, DMA1_FLAG_HT3, DMA1_FLAG_TE3},
-    {DMA_CH_4, DMA1_Channel4, DMA1_FLAG_GL4, DMA1_FLAG_TC4, DMA1_FLAG_HT4, DMA1_FLAG_TE4},
-    {DMA_CH_5, DMA1_Channel5, DMA1_FLAG_GL5, DMA1_FLAG_TC5, DMA1_FLAG_HT5, DMA1_FLAG_TE5},
-    {DMA_CH_6, DMA1_Channel6, DMA1_FLAG_GL6, DMA1_FLAG_TC6, DMA1_FLAG_HT6, DMA1_FLAG_TE6},
-    {DMA_CH_7, DMA1_Channel7, DMA1_FLAG_GL7, DMA1_FLAG_TC7, DMA1_FLAG_HT7, DMA1_FLAG_TE7},
-    {DMA_CH_8, DMA1_Channel8, DMA1_FLAG_GL8, DMA1_FLAG_TC8, DMA1_FLAG_HT8, DMA1_FLAG_TE8},
+    {DMA_CH_1, DMA1_Channel1, DMA1_Channel1_IRQn,DMA1_FLAG_GL1, DMA1_FLAG_TC1, DMA1_FLAG_HT1, DMA1_FLAG_TE1, DMA1_IT_GL1, DMA1_IT_TC1, DMA1_IT_HT1, DMA1_IT_TE1},
+    {DMA_CH_2, DMA1_Channel2, DMA1_Channel2_IRQn,DMA1_FLAG_GL2, DMA1_FLAG_TC2, DMA1_FLAG_HT2, DMA1_FLAG_TE2, DMA1_IT_GL2, DMA1_IT_TC2, DMA1_IT_HT2, DMA1_IT_TE2},
+    {DMA_CH_3, DMA1_Channel3, DMA1_Channel3_IRQn,DMA1_FLAG_GL3, DMA1_FLAG_TC3, DMA1_FLAG_HT3, DMA1_FLAG_TE3, DMA1_IT_GL3, DMA1_IT_TC3, DMA1_IT_HT3, DMA1_IT_TE3},
+    {DMA_CH_4, DMA1_Channel4, DMA1_Channel4_IRQn,DMA1_FLAG_GL4, DMA1_FLAG_TC4, DMA1_FLAG_HT4, DMA1_FLAG_TE4, DMA1_IT_GL4, DMA1_IT_TC4, DMA1_IT_HT4, DMA1_IT_TE4},
+    {DMA_CH_5, DMA1_Channel5, DMA1_Channel5_IRQn,DMA1_FLAG_GL5, DMA1_FLAG_TC5, DMA1_FLAG_HT5, DMA1_FLAG_TE5, DMA1_IT_GL5, DMA1_IT_TC5, DMA1_IT_HT5, DMA1_IT_TE5},
+    {DMA_CH_6, DMA1_Channel6, DMA1_Channel6_IRQn,DMA1_FLAG_GL6, DMA1_FLAG_TC6, DMA1_FLAG_HT6, DMA1_FLAG_TE6, DMA1_IT_GL6, DMA1_IT_TC6, DMA1_IT_HT6, DMA1_IT_TE6},
+    {DMA_CH_7, DMA1_Channel7, DMA1_Channel7_IRQn,DMA1_FLAG_GL7, DMA1_FLAG_TC7, DMA1_FLAG_HT7, DMA1_FLAG_TE7, DMA1_IT_GL7, DMA1_IT_TC7, DMA1_IT_HT7, DMA1_IT_TE7},
+    {DMA_CH_8, DMA1_Channel8, DMA1_Channel8_IRQn,DMA1_FLAG_GL8, DMA1_FLAG_TC8, DMA1_FLAG_HT8, DMA1_FLAG_TE8, DMA1_IT_GL8, DMA1_IT_TC8, DMA1_IT_HT8, DMA1_IT_TE8},
 };
 
+static void dma_isr(uint8_t ch);
+
+// DMAデバッグ用
 #ifdef DEBUG_DMA_TEST
 #define DMA_TEST_BUF_SIZE    3
 uint8_t g_dbg_dma_test_src_u8_buf[DMA_TEST_BUF_SIZE]   = {0xAB, 0xCD, 0xEF};
@@ -52,6 +71,7 @@ void dbg_dma_test(void)
     memset(&g_dbg_dma_test_dst_u32_buf[0], 0, DMA_TEST_BUF_SIZE);
 
     // DMA Ch1 ... 8bit転送テスト
+    config_u8.is_it_use = true;
     config_u8.ch = DMA_CH_1;
     config_u8.dir = DMA_MEM_TO_MEM;
     config_u8.mode = DMA_MODE_ONE_SHOT;
@@ -62,6 +82,7 @@ void dbg_dma_test(void)
     drv_dma_init(&config_u8);
 
     // DMA Ch2 ... 8bit転送テスト
+    config_u16.is_it_use = true;
     config_u16.ch = DMA_CH_2;
     config_u16.dir = DMA_MEM_TO_MEM;
     config_u16.mode = DMA_MODE_ONE_SHOT;
@@ -72,6 +93,7 @@ void dbg_dma_test(void)
     drv_dma_init(&config_u16);
 
     // DMA Ch3 ... 8bit転送テスト
+    config_u32.is_it_use = true;
     config_u32.ch = DMA_CH_3;
     config_u32.dir = DMA_MEM_TO_MEM;
     config_u32.mode = DMA_MODE_ONE_SHOT;
@@ -84,11 +106,52 @@ void dbg_dma_test(void)
     drv_dma_start(DMA_CH_1);
     drv_dma_start(DMA_CH_2);
     drv_dma_start(DMA_CH_3);
-    drv_dma_transfer_check(DMA_CH_1);
-    drv_dma_transfer_check(DMA_CH_2);
-    drv_dma_transfer_check(DMA_CH_3);
+    // drv_dma_transfer_check(DMA_CH_1);
+    // drv_dma_transfer_check(DMA_CH_2);
+    // drv_dma_transfer_check(DMA_CH_3);
 }
 #endif // DEBUG_DMA_TEST
+
+/**
+ * @brief DMA割り込みハンドラISR
+ * 
+ * @param ch 
+ */
+static void dma_isr(uint8_t ch)
+{
+    if( DMA_GetITStatus(g_dma_ch_data[ch].tc_it_flg) != RESET )
+    {
+        DMA_Cmd(g_dma_ch_data[ch].p_ch_typedef, DISABLE );
+        DMA_ClearITPendingBit(g_dma_ch_data[ch].tc_it_flg);
+    }
+}
+
+/**
+ * @brief DMA Ch1 割り込みハンドラ
+ * 
+ */
+void DMA1_Channel1_IRQHandler(void)
+{
+    dma_isr(DMA_CH_1);
+}
+
+/**
+ * @brief DMA Ch2 割り込みハンドラ
+ * 
+ */
+void DMA1_Channel2_IRQHandler(void)
+{
+    dma_isr(DMA_CH_2);
+}
+
+/**
+ * @brief DMA Ch3 割り込みハンドラ
+ * 
+ */
+void DMA1_Channel3_IRQHandler(void)
+{
+    dma_isr(DMA_CH_3);
+}
 
 /**
  * @brief DMA転送開始
@@ -141,6 +204,7 @@ void drv_dma_init(dma_init_config_t *p_dma_config)
     void *p_dst;
     uint8_t transfer_byte;
     DMA_InitTypeDef dma_init_data = {0};
+	NVIC_InitTypeDef nvic_init_data = {0};
 
     DMA_StructInit(&dma_init_data);
     RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
@@ -205,5 +269,13 @@ void drv_dma_init(dma_init_config_t *p_dma_config)
     DMA_Init(g_dma_ch_data[p_dma_config->ch].p_ch_typedef, &dma_init_data);
     DMA_ClearFlag(g_dma_ch_data[p_dma_config->ch].tc_flg);
 
-    // DMA_Cmd(DMA1_Channel3, DISABLE);
+    // DMA割り込み有効
+    if(p_dma_config->is_it_use != false){
+        nvic_init_data.NVIC_IRQChannel = g_dma_ch_data[p_dma_config->ch].irq;
+        nvic_init_data.NVIC_IRQChannelPreemptionPriority = 1;
+        nvic_init_data.NVIC_IRQChannelSubPriority = 0;
+        nvic_init_data.NVIC_IRQChannelCmd = ENABLE;
+        NVIC_Init(&nvic_init_data);
+        DMA_ITConfig(g_dma_ch_data[p_dma_config->ch].p_ch_typedef, DMA_IT_TC, ENABLE);
+    }
 }

@@ -1,7 +1,7 @@
 /**
  * @file drv_uasrt.c
  * @author Chimipupu(https://github.com/Chimipupu)
- * @brief  CH32X033 USARTドライバ＆ラッパー＆API
+ * @brief CH32X033用USARTドライバのラッパー＆API
  * @version 0.1
  * @date 2025-08-24
  * 

@@ -1,7 +1,7 @@
 /**
  * @file drv_dma.h
  * @author Chimipupu(https://github.com/Chimipupu)
- * @brief  CH32X033 DMAドライバ＆ラッパー＆API
+ * @brief CH32X033用DMAドライバのラッパー＆API
  * @version 0.1
  * @date 2025-09-20
  * 
@@ -52,6 +52,7 @@ typedef struct {
     uint32_t data_size;     // 転送サイズ(Byte数)
     void *p_src_buf;        // DMA転送元バッファポインタ
     void *p_dst_buf;        // DMA転送先バッファポインタ
+    bool is_it_use;         // DMA割り込み有効
 } dma_init_config_t;
 
 void drv_dma_start(uint8_t ch);
