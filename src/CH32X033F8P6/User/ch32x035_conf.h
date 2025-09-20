@@ -19,7 +19,7 @@
 #include "ch32x035_exti.h"
 #include "ch32x035_flash.h"
 #include "ch32x035_gpio.h"
-#include "ch32x035_i2c.h"
+// #include "ch32x035_i2c.h"
 #include "ch32x035_iwdg.h"
 #include "ch32x035_pwr.h"
 #include "ch32x035_rcc.h"
