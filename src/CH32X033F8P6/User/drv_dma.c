@@ -14,11 +14,13 @@
 void DMA1_Channel1_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel2_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#if 0
 void DMA1_Channel4_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel5_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel6_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel7_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 void DMA1_Channel8_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+#endif
 
 // （ROM）DMAステータスフラグテーブル
 const dma_status_flg_t g_dma_status_flg_tbl[] = {
@@ -92,11 +94,7 @@ static void dma_isr(uint8_t ch)
 
     // DMA転送完了割り込み(TC)フラグ確認
     if(status != RESET) {
-        // DMAが単発モード時
-        if(g_dma_data_tbl[ch].p_init_config->mode == DMA_MODE_ONE_SHOT) {
-            DMA_Cmd(g_dma_ch_config_data_tbl[ch].p_ch_typedef, DISABLE);
-        }
-
+        DMA_Cmd(g_dma_ch_config_data_tbl[ch].p_ch_typedef, DISABLE);
         DMA_ClearITPendingBit(g_dma_ch_config_data_tbl[ch].p_it_status_flg_tbl->tc_it_flg);
     }
 }
