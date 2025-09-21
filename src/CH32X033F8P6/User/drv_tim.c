@@ -14,13 +14,13 @@
 
 bool g_is_tim_cnt_up = false;
 
-void TIM3_UP_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
+void TIM3_IRQHandler(void) __attribute__((interrupt("WCH-Interrupt-fast")));
 
 /**
- * @brief TIM3カウントアップ割り込み
+ * @brief TIM3割り込みハンドラ
  * 
  */
-void TIM3_UP_IRQHandler(void)
+void TIM3_IRQHandler(void)
 {
     ITStatus ret;
 
@@ -28,9 +28,8 @@ void TIM3_UP_IRQHandler(void)
 
     if(ret == SET) {
         g_is_tim_cnt_up = true;
+        TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
     }
-
-    TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
 }
 
 /**
@@ -51,7 +50,7 @@ void drv_tim_init(uint16_t arr, uint16_t psc)
     TIM_TimeBaseInitStructure.TIM_Prescaler = psc;
     TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;
     TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;
-    TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 50;
+    TIM_TimeBaseInitStructure.TIM_RepetitionCounter = 48;
     TIM_TimeBaseInit(TIM3, &TIM_TimeBaseInitStructure);
 
     TIM_ClearITPendingBit(TIM3, TIM_IT_Update);
