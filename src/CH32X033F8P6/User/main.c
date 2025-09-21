@@ -30,7 +30,7 @@ int main(void)
 #endif // DEBUG_DMA_TEST
 
     // タイマー初期化
-    drv_tim_init(65535, 48); // TIM1 周期@1us、カウントアップ@65.535ms間隔
+    drv_tim_init(65535, 48); // TIM3 周期@1us、カウントアップ@65.535ms間隔
 #ifdef DEBUG_TIM_TEST
     // (DEBUG)タイマーのデバッグ
     dbg_tim_test();

@@ -30,7 +30,7 @@ inline __attribute__((always_inline)) uint16_t drv_get_tim_cnt(void)
 {
     uint16_t cnt;
 
-    cnt = TIM_GetCounter(TIM1);
+    cnt = TIM_GetCounter(TIM3);
 
     return cnt;
 }
