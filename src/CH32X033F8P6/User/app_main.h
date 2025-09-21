@@ -19,6 +19,9 @@
 // (DEBUG)デバッグ関連
 // #define DBG_COM_USE // デバッグモニタ
 
+// 円周率を計算するとROMをアホみたいに食う定数で対処
+#define MATH_PI_STR "3.14159265358979323846"
+
 // レジスタを8/16/32bitでR/Wするマクロ
 #define REG_READ_BYTE(base, offset)         (*(volatile uint8_t  *)((base) + (offset)))
 #define REG_READ_WORD(base, offset)         (*(volatile uint16_t *)((base) + (offset)))

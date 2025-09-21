@@ -11,7 +11,7 @@
 #include "app_main.h"
 #include "drv_tim.h"
 #include "state_machine.h"
-#include <math.h>
+// #include <math.h>
 
 #ifdef DBG_COM_USE
 #include "dbg_com.h"
@@ -22,12 +22,12 @@ extern bool g_is_usart_irq_proc_end;
 
 /**
  * @brief floatをuint32_tでprintf()する関数
- * loatのprintf()は容量を食うから整数でprintf()
+ * floatのprintf()は容量を食うから整数でprintf()
  * @param value 
  */
 void print_float_to_u32(float value)
 {
-    uint32_t ip = (uint32_t)value;
+    uint8_t ip = (uint32_t)value;
     uint32_t frac = (uint32_t)((value - (float)ip) * 1000000.0f + 0.5f);
 
     if (frac >= 1000000U) {
@@ -35,8 +35,7 @@ void print_float_to_u32(float value)
         frac -= 1000000U;
     }
 
-    // %lu を使って符号なしを明示（環境に合わせてキャスト）
-    printf("%lu.%06lu", (unsigned long)ip, (unsigned long)frac);
+    printf("%d.%06lu", ip, (unsigned long)frac);
 }
 
 /**
@@ -95,6 +94,7 @@ void show_mem_dump(uint32_t dump_addr, uint32_t dump_size)
     }
 }
 
+#if 0
 // ガウス・ルジャンドル法による円周率の計算
 float math_pi_calc(uint8_t cnt)
 {
@@ -121,6 +121,7 @@ float math_pi_calc(uint8_t cnt)
 
     return pi;
 }
+#endif
 
 /**
  * @brief 処理時間取得関数(単位:us)
