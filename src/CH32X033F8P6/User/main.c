@@ -39,9 +39,11 @@ int main(void)
     // USRAT初期化 115200 8N1(TX=PA10ピン, RX=PA11ピン)
     hw_usart_init();
 
+#if 0
     printf("[DEBUG] CH32X0033F8P6 Develop\r\n");
-    printf("SystemClk:%d\r\n",SystemCoreClock);
+    printf("SystemClk:%d\r\n", SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
+#endif
 
     // アプリメイン初期化
     app_main_init();

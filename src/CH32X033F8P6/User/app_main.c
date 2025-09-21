@@ -9,13 +9,35 @@
  * 
  */
 #include "app_main.h"
-#include "dbg_com.h"
-
 #include "drv_tim.h"
+#include "state_machine.h"
+#include <math.h>
+
+#ifdef DBG_COM_USE
 #include "dbg_com.h"
+#endif // DBG_COM_USE
 
 // extern bool g_is_tim_cnt_up;
 extern bool g_is_usart_irq_proc_end;
+
+/**
+ * @brief floatをuint32_tでprintf()する関数
+ * loatのprintf()は容量を食うから整数でprintf()
+ * @param value 
+ */
+void print_float_to_u32(float value)
+{
+    uint32_t ip = (uint32_t)value;
+    uint32_t frac = (uint32_t)((value - (float)ip) * 1000000.0f + 0.5f);
+
+    if (frac >= 1000000U) {
+        ip += 1;
+        frac -= 1000000U;
+    }
+
+    // %lu を使って符号なしを明示（環境に合わせてキャスト）
+    printf("%lu.%06lu", (unsigned long)ip, (unsigned long)frac);
+}
 
 /**
  * @brief メモリダンプ(16進HEX & Ascii)
@@ -73,26 +95,31 @@ void show_mem_dump(uint32_t dump_addr, uint32_t dump_size)
     }
 }
 
-/**
- * @brief 関数の実行時間を計測する
- * 
- * @param func 計測対象の関数ポインタ
- * @param func_name 関数名（表示用）
- * @param ... 関数に渡す引数（可変長）
- */
-void proc_exec_time(void (*func)(void), const char* func_name, ...)
+// ガウス・ルジャンドル法による円周率の計算
+float math_pi_calc(uint8_t cnt)
 {
-    _DI();
-    volatile uint16_t start_time = drv_get_tim_cnt();
-    _EI();
+    uint8_t i;
+    float a = 1.0;
+    float b = 1.0 / sqrt(2);
+    float t = 1.0 / 4.0;
+    float p = 1.0;
 
-    func();
+    for (i = 0; i < cnt; i++)
+    {
+        float an = (a + b) / 2.0;
+        float bn = sqrt(a * b);
+        float tn = t - p * pow(a - an, 2);
+        float pn = 2.0 * p;
 
-    _DI();
-    volatile uint16_t end_time = drv_get_tim_cnt();
-    _EI();
+        a = an;
+        b = bn;
+        t = tn;
+        p = pn;
+    }
 
-    printf("proc time %s: %u us\n", func_name, end_time - start_time);
+    float pi = pow(a + b, 2) / (4.0 * t);
+
+    return pi;
 }
 
 /**
@@ -121,8 +148,13 @@ uint32_t get_proc_time(uint32_t start_us_cnt, uint32_t end_us_cnt)
  */
 void app_main_init(void)
 {
+#ifdef DBG_COM_USE
     // デバッグモニタ初期化
     dbg_com_init();
+#endif // DBG_COM_USE
+
+    // ステートマシーン初期化
+    state_machine_init();
 }
 
 /**
@@ -131,6 +163,12 @@ void app_main_init(void)
  */
 void app_main(void)
 {
+#ifdef DBG_COM_USE
     // デバッグモニタ
     dbg_com_main();
+#else
+    // ステートマシーン
+    state_machine_main();
+    Delay_Ms(1000);
+#endif // DBG_COM_USE
 }

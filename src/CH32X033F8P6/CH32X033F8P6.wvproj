@@ -141,7 +141,7 @@
 						"include_files": []
 					},
 					"optimization": {
-						"language_standard": "gnu99",
+						"language_standard": "gnu11",
 						"other_optimization_flags": ""
 					},
 					"warnings": {
@@ -209,7 +209,9 @@
 						"omit_all_symbol_information": false
 					},
 					"libraries": {
-						"libraries": [],
+						"libraries": [
+							"m"
+						],
 						"library_search_path": []
 					},
 					"miscellaneous": {
@@ -243,7 +245,9 @@
 						"omit_all_symbol_information": false
 					},
 					"libraries": {
-						"libraries": [],
+						"libraries": [
+							"m"
+						],
 						"library_search_path": []
 					},
 					"miscellaneous": {
@@ -314,14 +318,14 @@
 					"save_restore": true,
 					"other_target_flags": ""
 				},
-				"component_toolchain": "${WCH:Toolchain:GCC8}",
+				"component_toolchain": "${WCH:Toolchain:GCC12}",
 				"name": "obj",
 				"configVariables": []
 			}
 		]
 	},
 	"flashConfig": {
-		"mcutype": "CH32X033",
+		"mcutype": "CH32X035",
 		"address": "0x08000000",
 		"target_path": "obj/CH32X033F8P6.hex",
 		"clkSpeed": "High",
@@ -354,7 +358,7 @@
 			"enableNoZeroWaitingAreaFlash": false
 		},
 		"gdbCfg": {
-			"executable": "${WCH:Toolchain:GCC8}",
+			"executable": "${WCH:Toolchain:GCC12}",
 			"options": [],
 			"commands": [
 				"set mem inaccessible-by-default off",

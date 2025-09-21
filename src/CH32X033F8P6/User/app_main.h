@@ -15,7 +15,9 @@
 #include <stdint.h>
 #include <string.h>
 #include <stdarg.h>
-#include <math.h>
+
+// (DEBUG)デバッグ関連
+// #define DBG_COM_USE // デバッグモニタ
 
 // レジスタを8/16/32bitでR/Wするマクロ
 #define REG_READ_BYTE(base, offset)         (*(volatile uint8_t  *)((base) + (offset)))
@@ -49,8 +51,9 @@ __attribute__( ( always_inline ) ) static inline void _EI(void)
     __asm__ __volatile__("csrsi mstatus, 0x8");
 }
 
+void print_float_to_u32(float value);
 void show_mem_dump(uint32_t dump_addr, uint32_t dump_size);
-void proc_exec_time(void (*p_func)(void), const char* p_func_name, ...);
+float math_pi_calc(uint8_t cnt);
 uint32_t get_proc_time(uint32_t start_us_cnt, uint32_t end_us_cnt);
 void app_main_init(void);
 void app_main(void);
