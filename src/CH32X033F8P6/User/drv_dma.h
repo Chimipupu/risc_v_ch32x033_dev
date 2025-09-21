@@ -77,6 +77,17 @@ typedef struct {
     const dma_it_status_flg_t *p_it_status_flg_tbl;
 } dma_ch_config_data_t;
 
+typedef struct {
+    const dma_init_config_t *p_init_config;
+    const dma_ch_config_data_t *p_ch_data;
+} dma_data_t;
+
+// typedef struct {
+//     void *p_src_buf;        // DMA転送元バッファポインタ
+//     void *p_dst_buf;        // DMA転送先バッファポインタ
+//     uint32_t data_size;     // 転送サイズ(Byte数)
+// } dma_circular_mode_data_t;
+
 void drv_dma_start(uint8_t ch);
 uint8_t drv_dma_transfer_check(uint8_t ch);
 void drv_dma_init(dma_init_config_t *p_dma_config);
