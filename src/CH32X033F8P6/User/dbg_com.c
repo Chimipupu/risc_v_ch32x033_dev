@@ -326,16 +326,12 @@ void dbg_com_main(void)
         // Delete処理
         delete_char_at_cursor();
     } else if (c == KEY_ESC) {  // ESC
-
         // CH32X033は1byte毎にRXNEをいれてくるでの次のデータまで待ち
         Delay_Ms(1);
-
         c = hw_usart_get_char();
         if (c == KEY_ANSI_ESC) { // ANSI escape sequence
-
             // CH32X033は1byte毎にRXNEをいれてくるでの次のデータまで待ち
             Delay_Ms(1);
-
             c = hw_usart_get_char();
             if (c == KEY_UP) { // キーボードの上矢印
                 if (s_history_pos < s_history_count - 1) {

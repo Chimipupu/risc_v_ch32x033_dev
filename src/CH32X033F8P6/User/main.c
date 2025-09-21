@@ -14,6 +14,7 @@
 
 #include "debug.h"
 #include "drv_dma.h"
+#include "drv_tim.h"
 #include "drv_uasrt.h"
 #include "app_main.h"
 
@@ -23,17 +24,24 @@ int main(void)
     SystemCoreClockUpdate();
     Delay_Init();
 
+#ifdef DEBUG_DMA_TEST
+    // (DEBUG)DMAのデバッグ
+    dbg_dma_test();
+#endif // DEBUG_DMA_TEST
+
+    // タイマー初期化
+    drv_tim_init(65535, 48); // TIM1 周期@1us、カウントアップ@65.535ms間隔
+#ifdef DEBUG_TIM_TEST
+    // (DEBUG)タイマーのデバッグ
+    dbg_tim_test();
+#endif // DEBUG_TIM_TEST
+
     // USRAT初期化 115200 8N1(TX=PA10ピン, RX=PA11ピン)
     hw_usart_init();
 
     printf("[DEBUG] CH32X0033F8P6 Develop\r\n");
     printf("SystemClk:%d\r\n",SystemCoreClock);
     printf("ChipID:%08x\r\n", DBGMCU_GetCHIPID());
-
-#ifdef DEBUG_DMA_TEST
-    // DMAのデバッグ
-    dbg_dma_test();
-#endif // DEBUG_DMA_TEST
 
     // アプリメイン初期化
     app_main_init();
