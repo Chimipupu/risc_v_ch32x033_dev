@@ -55,8 +55,11 @@
 - IDE/SDK/コンパイラ
   - [MounRiver Studio (MRS) V2.2.0](https://www.mounriver.com/download)🔗
 - 最適化
-  - `-Og`　(デバッグ時)
-  - `-Os`　(通常)
+  - リリース
+    - `-O0` ... 最適化なし
+    - `-Os` ... サイズ優先
+  - デバッグ
+    - `-Og`
 
 ### デバッガ
 

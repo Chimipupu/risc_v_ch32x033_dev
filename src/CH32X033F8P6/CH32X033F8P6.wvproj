@@ -53,7 +53,7 @@
 				"post_script_description": "",
 				"excludeResources": [],
 				"optimization": {
-					"level": "debug",
+					"level": "size",
 					"message_length": true,
 					"char_is_signed": true,
 					"function_sections": true,
@@ -329,7 +329,7 @@
 		"address": "0x08000000",
 		"target_path": "obj/CH32X033F8P6.hex",
 		"clkSpeed": "High",
-		"debug_interface_mode": "1-wire serial",
+		"debug_interface_mode": "",
 		"erase": true,
 		"program": true,
 		"verify": true,
